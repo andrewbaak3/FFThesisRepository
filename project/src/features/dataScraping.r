@@ -5,7 +5,7 @@ library(data.table)
 source("./project/src/features/tablescrapefunction.R")
 
 
-getyeartables(2020, 1)
+getyeartables(2020, 2)
 
 
 fwrite(projections_table, "./project/volume/data/raw/2018season.csv")
