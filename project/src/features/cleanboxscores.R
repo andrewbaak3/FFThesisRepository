@@ -1,12 +1,21 @@
 library(data.table)
 
-
+#read in path and list files in path
 path<-"./project/volume/data/external/SeasonBoxScores/"
 year_files<-list.files(path)
 
+#remove file if it already exists to prevent overwriting
+if (file.exists("./project/volume/data/interim/allBoxscores.csv")) {
+  file.remove("./project/volume/data/interim/allBoxscores.csv")}
+
+#for loop to search through all files in the path
 for (i in 1:length(year_files)) {
+  
+  #set year equal to the year of the file being looked at
   year <- year_files[i]
   data_table<-fread(paste0(path,"/",year_files[i]))
+  #create data_table with only relevant columns
   data_table<-data_table[,.(game_id,home_team,away_team,week,season,home_score,away_score)]
-  fwrite(data_table, paste0("./project/volume/data/interim/", "season",year))
+  #write out result for each year to one big file
+  fwrite(data_table,"./project/volume/data/interim/allBoxscores.csv", append=T)
 }
