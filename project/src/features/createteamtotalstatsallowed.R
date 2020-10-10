@@ -3,9 +3,20 @@ library(data.table)
 
 statsandscores<-fread("./project/volume/data/processed/StatsandBoxscores.csv")
 
-teamAllowed<-dcast(statsandscores,Opponent+game_id+season+week+cumulativeweek~.,sum,na.rm=T,value.var = c("PassingYds","Int","PassingAtt"))
-teamAllowed<-statsandscores[,.(PassingYds=sum(PassingYds)),by=c("Opponent","game_id","season",
-                                                                "week", "cumulativeweek")]
+NFLvalues<-c("PassingYds","Int","PassingAtt","Cmp","RushingAtt",
+             "RushingYds","RushingTD","Rec","Tgt","ReceivingYds",
+             "ReceivingTD","FL","PPRFantasyPoints","StandardFantasyPoints",
+             "HalfPPRFantasyPoints")
+
+
+teamAllowed<-dcast(statsandscores,Opponent+Tm+game_id+season+week+cumulativeweek~.,
+                   sum,na.rm=T,value.var = NFLvalues)
+
 setkey(teamAllowed,Opponent,cumulativeweek)
 
-teamAllowed[, roll_3_passing_yards := Reduce(`+`, shift(PassingYds, 0:2))]
+for (i in 1:length(NFLvalues)) {
+  teamAllowed[, new_column := Reduce(`+`, shift(get(NFLvalues[i]), 1:4))]
+  setnames(teamAllowed,"new_column",paste0("roll_4_",NFLvalues[i]))
+}
+
+fwrite(teamAllowed, "./project/volume/data/processed/teamstats.csv")

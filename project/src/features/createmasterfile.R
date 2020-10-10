@@ -41,15 +41,20 @@ setkey(allboxscores,week,season,Tm)
 scoresandstats<-merge(playerstats,allboxscores, all.x = T)
 scoresandstats<-scoresandstats[order(season,week)]
 
-#Create separate table with just team, week, and c_week to calculate the correct cumulative week
-weekinfo<-scoresandstats[,.(Tm, week, c_week)]
-weekinfo<-weekinfo[!duplicated(weekinfo)]
-weekinfo<-weekinfo[,cumulativeweek := cumsum(c_week),by=c("Tm")]
-#pull out separate table with only team, week, c_week, remove all duplicates, 
-#do cumulative week on just this table and merge back in
-#DT[!duplicated(DT)]
-scoresandstats[,cumulativeweek := cumsum(c_week),by="Tm"]
 
+
+
+#Create separate table with just team, week, and c_week to calculate the correct cumulative week
+DT<- scoresandstats[,.(season,week,c_week)]
+DT<-DT[!duplicated(DT)]
+DT<-DT[,cumulativeweek := cumsum(c_week)]
+
+DT$c_week<-NULL
+scoresandstats$c_week<-NULL
+
+setkey(scoresandstats, season, week)
+setkey(DT,season,week)
+scoresandstats<-merge(scoresandstats,DT)
 
 
 
