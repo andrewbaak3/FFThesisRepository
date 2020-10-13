@@ -3,6 +3,11 @@ library(data.table)
 
 statsandscores<-fread("./project/volume/data/processed/StatsandBoxscores.csv")
 
+
+#remove file if it already exists to not override the data
+if (file.exists("./project/volume/data/processed/teamstats.csv")) {
+  file.remove("./project/volume/data/processed/teamstats.csv")}
+
 NFLvalues<-c("PassingYds","Int","PassingAtt","Cmp","RushingAtt",
              "RushingYds","RushingTD","Rec","Tgt","ReceivingYds",
              "ReceivingTD","FL","PPRFantasyPoints","StandardFantasyPoints",
