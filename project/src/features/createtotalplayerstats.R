@@ -9,7 +9,7 @@ player_achieved<-statsandscores
 if (file.exists("./project/volume/data/processed/playerstats.csv")) {
   file.remove("./project/volume/data/processed/playerstats.csv")}
 
-NFLvalues<-c("PassingYds","Int","PassingAtt","Cmp","RushingAtt",
+NFLvalues<-c("PassingYds","PassingTD","Int","PassingAtt","Cmp","RushingAtt",
              "RushingYds","RushingTD","Rec","Tgt","ReceivingYds",
              "ReceivingTD","FL","PPRFantasyPoints","StandardFantasyPoints",
              "HalfPPRFantasyPoints")
