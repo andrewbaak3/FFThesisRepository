@@ -2,11 +2,11 @@ library(data.table)
 library(caret)
 
 #remove file if it already exists to not override the data
-if (file.exists("./project/volume/data/processed/train.csv")) {
-        file.remove("./project/volume/data/processed/train.csv")}
+if (file.exists("./project/volume/data/processed/train(roll4).csv")) {
+        file.remove("./project/volume/data/processed/train(roll4).csv")}
 
-playerstats<-fread("./project/volume/data/processed/playerstats.csv")
-teamstats<-fread("./project/volume/data/processed/teamstats.csv")
+playerstats<-fread("./project/volume/data/processed/playerstats(roll4).csv")
+teamstats<-fread("./project/volume/data/processed/teamstats(roll4).csv")
 
 playerstats<-playerstats[,.(season,week,Tm,Player,Pos,PPRFantasyPoints,game_id,Opponent,roll_4_PassingYds,roll_4_PassingTD,
                             roll_4_Int,roll_4_PassingAtt,roll_4_Cmp,roll_4_RushingAtt,roll_4_RushingYds,
@@ -90,6 +90,6 @@ train$PassingTDs_Dif<-scaled_passingtds$Player_roll_4_PassingTD-scaled_passingtd
 
 
 #Write out train set to processed folder
-fwrite(train, "./project/volume/data/processed/train.csv")
+fwrite(train, "./project/volume/data/processed/train(roll4).csv")
 
 

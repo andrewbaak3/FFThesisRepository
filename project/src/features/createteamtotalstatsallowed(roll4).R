@@ -5,8 +5,8 @@ statsandscores<-fread("./project/volume/data/processed/StatsandBoxscores.csv")
 
 
 #remove file if it already exists to not override the data
-if (file.exists("./project/volume/data/processed/teamstats.csv")) {
-  file.remove("./project/volume/data/processed/teamstats.csv")}
+if (file.exists("./project/volume/data/processed/teamstats(roll4).csv")) {
+  file.remove("./project/volume/data/processed/teamstats(roll4).csv")}
 
 NFLvalues<-c("PassingYds","Int","PassingTD","PassingAtt","Cmp","RushingAtt",
              "RushingYds","RushingTD","Rec","Tgt","ReceivingYds",
@@ -17,7 +17,6 @@ NFLvalues<-c("PassingYds","Int","PassingTD","PassingAtt","Cmp","RushingAtt",
 teamAllowed<-dcast(statsandscores,Opponent+Tm+game_id+season+week+cumulativeweek~.,
                    sum,na.rm=T,value.var = NFLvalues)
 
-teamAllowed[Tm == "BAL"][season == "2018"][order(week)][,.(PassingYds)]
 
 setkey(teamAllowed,Opponent,cumulativeweek)
 
@@ -29,4 +28,4 @@ for (i in 1:length(NFLvalues)) {
 
 
 
-fwrite(teamAllowed, "./project/volume/data/processed/teamstats.csv")
+fwrite(teamAllowed, "./project/volume/data/processed/teamstats(roll4).csv")

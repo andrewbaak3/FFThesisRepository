@@ -5,7 +5,7 @@ library(xgboost)
 library(ggplot2)
 
 #read in data
-train<-fread("./project/volume/data/processed/train.csv")
+train<-fread("./project/volume/data/processed/train(roll3).csv")
 
 sample_pos<-"WR"
 train<-train[Pos== sample_pos]
@@ -42,19 +42,17 @@ dtest <- xgb.DMatrix(x_test,label=test_y,missing=NA)
 
 #Define XGboost model and parameters 
 param <- list(  objective           = "reg:linear",
-                gamma               =0.002,
+                gamma               =0.001,
                 booster             = "gbtree",
                 eval_metric         = "rmse",
-                eta                 = 0.025,
+                eta                 = 0.001,
                 max_depth           = 20,
-                min_child_weight    = 20,
-                subsample           = 0.9,
+                min_child_weight    = 1,
+                subsample           = 1,
                 colsample_bytree    = 1,
                 tree_method = 'hist'
 )
-#Lower ETA, potentially increase max depth
-#Increase minimum child weight potentially (5,10?)
-#
+
 
 #Add the watchlist
 watchlist <- list(train = dtrain, test = dtest)
@@ -67,6 +65,22 @@ rollingfantasypoint_y[is.na(rollingfantasypoint_y)]<-null_y
 rmse(test_y, rollingfantasypoint_y)
 
 #Create Predictions
-XGB_model<-xgb.train(params=param,nrounds=200,missing=NA,data=dtrain,watchlist=watchlist,print_every_n=1,nthread=4)
+XGB_model<-xgb.train(params=param,nrounds=10000,missing=NA,data=dtrain,watchlist=watchlist,print_every_n=1,nthread=4, 
+                     early_stopping_rounds=25)
+
+#Write out hyperparameters so they can be compared
+best_ntrees<-unclass(XGB_model)$best_iteration
+train_param<-data.table(t(param))
+train_param$best_ntrees<-best_ntrees
+test_error<-unclass(XGB_model)$evaluation_log[as.numeric(best_ntrees),]$test_rmse
+train_param$test_error<-test_error
+
+#fwrite(train_param, "./project/src/models/trainingHyperparameters(roll4).csv", append = T)
+fwrite(train_param, "./project/src/models/trainingHyperparameters(roll3).csv", append = T)
+#fwrite(train_param, "./project/src/models/trainingHyperparameters(roll5).csv", append = T)
+
+
+importance_table<-xgb.importance(model=XGB_model)
+xgb.plot.importance(importance_table)
 
 test1$PPRFantasyPoints<-predict(XGB_model, newdata=dtest)
