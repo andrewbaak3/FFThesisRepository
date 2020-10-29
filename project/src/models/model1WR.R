@@ -5,7 +5,7 @@ library(xgboost)
 library(ggplot2)
 
 #read in data
-train<-fread("./project/volume/data/processed/train(roll3).csv")
+train<-fread("./project/volume/data/processed/train(roll5).csv")
 
 sample_pos<-"WR"
 train<-train[Pos== sample_pos]
@@ -42,14 +42,14 @@ dtest <- xgb.DMatrix(x_test,label=test_y,missing=NA)
 
 #Define XGboost model and parameters 
 param <- list(  objective           = "reg:linear",
-                gamma               =0.001,
+                gamma               =0.2,
                 booster             = "gbtree",
                 eval_metric         = "rmse",
-                eta                 = 0.001,
-                max_depth           = 20,
-                min_child_weight    = 1,
-                subsample           = 1,
-                colsample_bytree    = 1,
+                eta                 = 0.2,
+                max_depth           = 3,
+                min_child_weight    = 30,
+                subsample           = .8,
+                colsample_bytree    = .8,
                 tree_method = 'hist'
 )
 
@@ -75,9 +75,9 @@ train_param$best_ntrees<-best_ntrees
 test_error<-unclass(XGB_model)$evaluation_log[as.numeric(best_ntrees),]$test_rmse
 train_param$test_error<-test_error
 
-#fwrite(train_param, "./project/src/models/trainingHyperparameters(roll4).csv", append = T)
-fwrite(train_param, "./project/src/models/trainingHyperparameters(roll3).csv", append = T)
-#fwrite(train_param, "./project/src/models/trainingHyperparameters(roll5).csv", append = T)
+#fwrite(train_param, "./project/src/models/trainingHyperparametersWR(roll3).csv", append = T)
+#fwrite(train_param, "./project/src/models/trainingHyperparametersWR(roll4).csv", append = T)
+fwrite(train_param, "./project/src/models/trainingHyperparametersWR(roll5).csv", append = T)
 
 
 importance_table<-xgb.importance(model=XGB_model)
