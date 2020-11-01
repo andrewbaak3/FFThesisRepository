@@ -8,11 +8,12 @@ statsandscores<-fread("./project/volume/data/processed/StatsandBoxscores.csv")
 if (file.exists("./project/volume/data/processed/teamstats(roll3).csv")) {
   file.remove("./project/volume/data/processed/teamstats(roll3).csv")}
 
-NFLvalues<-c("PassingYds","Int","PassingTD","PassingAtt","Cmp","RushingAtt",
-             "RushingYds","RushingTD","Rec","Tgt","ReceivingYds",
-             "ReceivingTD","FL","PPRFantasyPoints","StandardFantasyPoints",
-             "HalfPPRFantasyPoints")
 
+NFLvalues<-c("PassingYds","PassingTD","Int","PassingAtt","Cmp","RushingAtt",
+             "RushingYds","RushingTD","Rec","Tgt","ReceivingYds",
+             "ReceivingTD","FL", "Tgt_share","Rushing_share","Passing_share", "Teamtotalpassingattempts", 
+             "Teamtotalrushingattempts","Teamvariancetargetshare","Teamvariancerushingshare","Teamvariancepassingshare",      
+             "PPRFantasyPoints","StandardFantasyPoints","HalfPPRFantasyPoints")
 
 teamAllowed<-dcast(statsandscores,Opponent+Tm+game_id+season+week+cumulativeweek~.,
                    sum,na.rm=T,value.var = NFLvalues)

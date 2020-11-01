@@ -11,8 +11,9 @@ if (file.exists("./project/volume/data/processed/playerstats(roll3).csv")) {
 
 NFLvalues<-c("PassingYds","PassingTD","Int","PassingAtt","Cmp","RushingAtt",
              "RushingYds","RushingTD","Rec","Tgt","ReceivingYds",
-             "ReceivingTD","FL","PPRFantasyPoints","StandardFantasyPoints",
-             "HalfPPRFantasyPoints")
+             "ReceivingTD","FL", "Tgt_share","Rushing_share","Passing_share", "Teamtotalpassingattempts", 
+             "Teamtotalrushingattempts","Teamvariancetargetshare","Teamvariancerushingshare","Teamvariancepassingshare",      
+             "PPRFantasyPoints","StandardFantasyPoints","HalfPPRFantasyPoints")
 
 
 setkey(player_achieved,Player,cumulativeweek)
