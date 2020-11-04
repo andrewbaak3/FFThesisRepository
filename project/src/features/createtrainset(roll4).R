@@ -3,7 +3,7 @@ library(caret)
 
 #remove file if it already exists to not override the data
 if (file.exists("./project/volume/data/processed/train(roll4).csv")) {
-        file.remove("./project/volume/data/processed/train(roll4).csv")}
+  file.remove("./project/volume/data/processed/train(roll4).csv")}
 
 playerstats<-fread("./project/volume/data/processed/playerstats(roll4).csv")
 teamstats<-fread("./project/volume/data/processed/teamstats(roll4).csv")
@@ -11,29 +11,44 @@ teamstats<-fread("./project/volume/data/processed/teamstats(roll4).csv")
 playerstats<-playerstats[,.(season,week,Tm,Player,Pos,PPRFantasyPoints,game_id,Opponent,roll_4_PassingYds,roll_4_PassingTD,
                             roll_4_Int,roll_4_PassingAtt,roll_4_Cmp,roll_4_RushingAtt,roll_4_RushingYds,
                             roll_4_RushingTD,roll_4_Rec,roll_4_Tgt,roll_4_ReceivingYds,roll_4_ReceivingTD,
-                            roll_4_FL,roll_4_PPRFantasyPoints)]
+                            roll_4_FL,roll_4_PPRFantasyPoints,roll_4_Tgt_share,roll_4_Rushing_share,roll_4_Passing_share,
+                            roll_4_Teamtotalpassingattempts,roll_4_Teamtotalrushingattempts,roll_4_Teamvariancepassingshare,
+                            roll_4_Teamvariancerushingshare,roll_4_Teamvariancetargetshare)]
 
 teamstats<-teamstats[,.(season,week,Tm,cumulativeweek,game_id,Opponent,roll_4_PassingYds,roll_4_PassingTD,roll_4_Int,
                         roll_4_PassingAtt, roll_4_Cmp,roll_4_RushingAtt,roll_4_RushingYds,roll_4_RushingTD,
-                        roll_4_Rec,roll_4_Tgt,roll_4_ReceivingYds,roll_4_ReceivingTD,roll_4_FL)]
+                        roll_4_Rec,roll_4_Tgt,roll_4_ReceivingYds,roll_4_ReceivingTD,roll_4_FL,roll_4_Tgt_share,roll_4_Rushing_share,
+                        roll_4_Passing_share,roll_4_Teamtotalpassingattempts,roll_4_Teamtotalrushingattempts,
+                        roll_4_Teamvariancepassingshare,roll_4_Teamvariancerushingshare,roll_4_Teamvariancetargetshare)]
 
 setnames(playerstats, c("roll_4_PassingYds","roll_4_PassingTD","roll_4_Int","roll_4_PassingAtt","roll_4_Cmp","roll_4_RushingAtt",
                         "roll_4_RushingYds","roll_4_RushingTD","roll_4_Rec","roll_4_Tgt","roll_4_ReceivingYds",
-                        "roll_4_ReceivingTD","roll_4_FL","roll_4_PPRFantasyPoints"), 
-                        c("Player_roll_4_PassingYds", "Player_roll_4_PassingTD","Player_roll_4_Int","Player_roll_4_PassingAtt",
-                        "Player_roll_4_Cmp","Player_roll_4_RushingAtt","Player_roll_4_RushingYds",
-                        "Player_roll_4_RushingTD","Player_roll_4_Rec","Player_roll_4_Tgt",
-                        "Player_roll_4_ReceivingYds","Player_roll_4_ReceivingTD","Player_roll_4_FL",
-                        "Player_roll_4_PPRFantasyPoints"))
+                        "roll_4_ReceivingTD","roll_4_FL","roll_4_PPRFantasyPoints","roll_4_Tgt_share","roll_4_Rushing_share",
+                        "roll_4_Passing_share","roll_4_Teamtotalpassingattempts","roll_4_Teamtotalrushingattempts",
+                        "roll_4_Teamvariancepassingshare","roll_4_Teamvariancerushingshare","roll_4_Teamvariancetargetshare"), 
+         c("Player_roll_4_PassingYds", "Player_roll_4_PassingTD","Player_roll_4_Int","Player_roll_4_PassingAtt",
+           "Player_roll_4_Cmp","Player_roll_4_RushingAtt","Player_roll_4_RushingYds",
+           "Player_roll_4_RushingTD","Player_roll_4_Rec","Player_roll_4_Tgt",
+           "Player_roll_4_ReceivingYds","Player_roll_4_ReceivingTD","Player_roll_4_FL",
+           "Player_roll_4_PPRFantasyPoints","Player_roll_4_Tgt_share","Player_roll_4_Rushing_share",
+           "Player_roll_4_Passing_share","Player_roll_4_Teamtotalpassingattempts","Player_roll_4_Teamtotalrushingattempts",
+           "Player_roll_4_Teamvariancepassingshare","Player_roll_4_Teamvariancerushingshare",
+           "Player_roll_4_Teamvariancetargetshare"))
 
 
 setnames(teamstats, c("roll_4_PassingYds","roll_4_PassingTD","roll_4_Int","roll_4_PassingAtt","roll_4_Cmp","roll_4_RushingAtt",
-                        "roll_4_RushingYds","roll_4_RushingTD","roll_4_Rec","roll_4_Tgt","roll_4_ReceivingYds",
-                        "roll_4_ReceivingTD","roll_4_FL"), 
-                         c("TeamAllowed_roll_4_PassingYds", "TeamAllowed_roll_4_PassingTD","TeamAllowed_roll_4_Int","TeamAllowed_roll_4_PassingAtt",
-                         "TeamAllowed_roll_4_Cmp","TeamAllowed_roll_4_RushingAtt","TeamAllowed_roll_4_RushingYds",
-                         "TeamAllowed_roll_4_RushingTD","TeamAllowed_roll_4_Rec","TeamAllowed_roll_4_Tgt",
-                         "TeamAllowed_roll_4_ReceivingYds","TeamAllowed_roll_4_ReceivingTD","TeamAllowed_roll_4_FL"))
+                      "roll_4_RushingYds","roll_4_RushingTD","roll_4_Rec","roll_4_Tgt","roll_4_ReceivingYds",
+                      "roll_4_ReceivingTD","roll_4_FL","roll_4_Tgt_share","roll_4_Rushing_share",
+                      "roll_4_Passing_share","roll_4_Teamtotalpassingattempts","roll_4_Teamtotalrushingattempts",
+                      "roll_4_Teamvariancepassingshare","roll_4_Teamvariancerushingshare","roll_4_Teamvariancetargetshare"), 
+         c("TeamAllowed_roll_4_PassingYds", "TeamAllowed_roll_4_PassingTD","TeamAllowed_roll_4_Int","TeamAllowed_roll_4_PassingAtt",
+           "TeamAllowed_roll_4_Cmp","TeamAllowed_roll_4_RushingAtt","TeamAllowed_roll_4_RushingYds",
+           "TeamAllowed_roll_4_RushingTD","TeamAllowed_roll_4_Rec","TeamAllowed_roll_4_Tgt",
+           "TeamAllowed_roll_4_ReceivingYds","TeamAllowed_roll_4_ReceivingTD","TeamAllowed_roll_4_FL",
+           "TeamAllowed_roll_4_Tgt_share","TeamAllowed_roll_4_Rushing_share","TeamAllowed_roll_4_Passing_share",
+           "TeamAllowed_roll_4_Teamtotalpassingattempts","TeamAllowed_roll_4_Teamtotalrushingattempts",
+           "TeamAllowed_roll_4_Teamvariancepassingshare","TeamAllowed_roll_4_Teamvariancerushingshare",
+           "TeamAllowed_roll_4_Teamvariancetargetshare"))
 
 #Set Keys and Merge Together PlayerStats and Teamstats to create train set
 setkey(playerstats,season,week,Tm,game_id,Opponent)
@@ -87,6 +102,37 @@ scale_transform9<-preProcess(train[,.(Player_roll_4_PassingTD,TeamAllowed_roll_4
                              method=c("center","scale"))
 scaled_passingtds<-predict(scale_transform9,train[,.(Player_roll_4_PassingTD,TeamAllowed_roll_4_PassingTD)])
 train$PassingTDs_Dif<-scaled_passingtds$Player_roll_4_PassingTD-scaled_passingtds$TeamAllowed_roll_4_PassingTD
+#RushingVar
+scale_transform10<-preProcess(train[,.(Player_roll_4_Teamvariancerushingshare,TeamAllowed_roll_4_Teamvariancerushingshare)],
+                              method=c("center","scale"))
+scaled_rushingshare<-predict(scale_transform10,train[,.(Player_roll_4_Teamvariancerushingshare,TeamAllowed_roll_4_Teamvariancerushingshare)])
+train$Rushing_Var_Dif<-scaled_rushingshare$Player_roll_4_Teamvariancerushingshare-scaled_rushingshare$TeamAllowed_roll_4_Teamvariancerushingshare
+#PassingVar
+scale_transform11<-preProcess(train[,.(Player_roll_4_Teamvariancepassingshare,TeamAllowed_roll_4_Teamvariancepassingshare)],
+                              method=c("center","scale"))
+scaled_passingshare<-predict(scale_transform11,train[,.(Player_roll_4_Teamvariancepassingshare,TeamAllowed_roll_4_Teamvariancepassingshare)])
+train$Passing_Var_Dif<-scaled_passingshare$Player_roll_4_Teamvariancepassingshare-scaled_passingshare$TeamAllowed_roll_4_Teamvariancepassingshare
+#TargetVar
+scale_transform12<-preProcess(train[,.(Player_roll_4_Teamvariancetargetshare,TeamAllowed_roll_4_Teamvariancetargetshare)],
+                              method=c("center","scale"))
+scaled_tgtshare<-predict(scale_transform12,train[,.(Player_roll_4_Teamvariancetargetshare,TeamAllowed_roll_4_Teamvariancetargetshare)])
+train$Tgt_Var_Dif<-scaled_tgtshare$Player_roll_4_Teamvariancetargetshare-scaled_tgtshare$TeamAllowed_roll_4_Teamvariancetargetshare
+#RushingShare
+scale_transform13<-preProcess(train[,.(Player_roll_4_Rushing_share,TeamAllowed_roll_4_Rushing_share)],
+                              method=c("center","scale"))
+scaled_rushing<-predict(scale_transform13,train[,.(Player_roll_4_Rushing_share,TeamAllowed_roll_4_Rushing_share)])
+train$Rushing_Share_Dif<-scaled_rushing$Player_roll_4_Rushing_share-scaled_rushing$TeamAllowed_roll_4_Rushing_share
+#PassingShare
+scale_transform14<-preProcess(train[,.(Player_roll_4_Passing_share,TeamAllowed_roll_4_Passing_share)],
+                              method=c("center","scale"))
+scaled_passing<-predict(scale_transform14,train[,.(Player_roll_4_Passing_share,TeamAllowed_roll_4_Passing_share)])
+train$Passing_Share_Dif<-scaled_passing$Player_roll_4_Passing_share-scaled_passing$TeamAllowed_roll_4_Passing_share
+#TargetShare
+scale_transform15<-preProcess(train[,.(Player_roll_4_Tgt_share,TeamAllowed_roll_4_Tgt_share)],
+                              method=c("center","scale"))
+scaled_tgt<-predict(scale_transform15,train[,.(Player_roll_4_Tgt_share,TeamAllowed_roll_4_Tgt_share)])
+train$Tgt_Share_Dif<-scaled_tgt$Player_roll_4_Tgt_share-scaled_tgt$TeamAllowed_roll_4_Tgt_share
+
 
 
 #Write out train set to processed folder
