@@ -11,11 +11,11 @@ path1<-"./project/volume/data/processed/train"
 
 for (i in 1:length(roll_sets)) {
   
-  path2<-paste0(path1,roll_sets[i])
+  path2<-paste0(path1,roll_sets[i],".csv")
   train<-fread(path2)
   
   #read in hyperparameter data
-  param_table<-fread("./project/src/models/hyperparametertuning.csv")
+  param_table<-fread("./project/src/models/HyperParams/hyperparametertuning.csv")
   
   for (j in 1:length(pos_list)) {
   
@@ -90,9 +90,9 @@ for (i in 1:length(roll_sets)) {
       test_error<-unclass(XGB_model)$evaluation_log[as.numeric(best_ntrees),]$test_rmse
       train_param$test_error<-test_error
       
-      path3<-"./project/src/models/trainingHyperparameters"
+      path3<-"./project/src/models/HyperParams/trainingHyperparameters"
       path4<-paste0(path3,pos_list[j])
-      path5<-paste0(path4,roll_sets[i])
+      path5<-paste0(path4,roll_sets[i],".csv")
       fwrite(train_param,path5, append = T)
     }
   }

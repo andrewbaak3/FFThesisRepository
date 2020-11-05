@@ -8,7 +8,7 @@ library(ggplot2)
 train<-fread("./project/volume/data/processed/train(roll7).csv")
 
 #read in hyperparameter data
-param_table<-fread("./project/src/models/hyperparametertuning.csv")
+param_table<-fread("./project/src/models/HyperParams/hyperparametertuning.csv")
 
 sample_pos<-"WR"
 train<-train[Pos== sample_pos]
@@ -53,7 +53,7 @@ for (i in 1:nrow(param_table)) {
                     max_depth           = param_table$max_depth[i],
                     min_child_weight    = param_table$min_child_weight[i],
                     subsample           = param_table$subsample[i],
-                    colsample_bytree    =param_table$colsample_bytree[i],
+                    colsample_bytree    = param_table$colsample_bytree[i],
                     tree_method = 'hist'
     )
     
@@ -81,11 +81,11 @@ for (i in 1:nrow(param_table)) {
     test_error<-unclass(XGB_model)$evaluation_log[as.numeric(best_ntrees),]$test_rmse
     train_param$test_error<-test_error
     
-    #fwrite(train_param, "./project/src/models/trainingHyperparametersWR(roll3).csv", append = T)
-    #fwrite(train_param, "./project/src/models/trainingHyperparametersWR(roll4).csv", append = T)
-    #fwrite(train_param, "./project/src/models/trainingHyperparametersWR(roll5).csv", append = T)
-    #fwrite(train_param, "./project/src/models/trainingHyperparametersWR(roll6).csv", append = T)
-    fwrite(train_param, "./project/src/models/trainingHyperparametersWR(roll7).csv", append = T)
+    #fwrite(train_param, "./project/src/models/HyperParams/trainingHyperparametersWR(roll3).csv", append = T)
+    #fwrite(train_param, "./project/src/models/HyperParams/trainingHyperparametersWR(roll4).csv", append = T)
+    #fwrite(train_param, "./project/src/models/HyperParams/trainingHyperparametersWR(roll5).csv", append = T)
+    #fwrite(train_param, "./project/src/models/HyperParams/trainingHyperparametersWR(roll6).csv", append = T)
+    fwrite(train_param, "./project/src/models/HyperParams/trainingHyperparametersWR(roll7).csv", append = T)
   }
 
 
