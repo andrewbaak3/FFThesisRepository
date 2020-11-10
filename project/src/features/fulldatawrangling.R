@@ -15,8 +15,8 @@ opt_parser = OptionParser(option_list=option_list);
 opt = parse_args(opt_parser);
 
 #Extract arguments passed in to options parser
-roll<-opt$roll
-week<-opt$week
+rolltime<-opt$roll
+numweeks<-opt$week
 
 ###############
 #Function 1
@@ -196,13 +196,14 @@ createmasterfile <- function() {
 #Function 4
 ###############
 #Function to create stats what a team allowed
-createteamstatsallowed<- function(roll,week) {
+createteamstatsallowed<- function(rolltime,numweeks) {
   
   statsandscores<-fread("./project/volume/data/processed/StatsandBoxscores.csv")
   
+
   #remove file if it already exists to not override the data
   path1<-"./project/volume/data/processed/teamstats"
-  path2<-paste0(path1,roll,".csv")
+  path2<-paste0(path1,rolltime,".csv")
   if (file.exists(path2)) {
     file.remove(path2)}
   
@@ -218,8 +219,8 @@ createteamstatsallowed<- function(roll,week) {
   setkey(teamAllowed,Opponent,cumulativeweek)
   
   for (i in 1:length(NFLvalues)) {
-    teamAllowed[, new_column := Reduce(`+`, shift(get(NFLvalues[i]), 1:week))]
-    setnames(teamAllowed,"new_column",paste0(roll,NFLvalues[i]))
+    teamAllowed[, new_column := Reduce(`+`, shift(get(NFLvalues[i]), 1:numweeks))]
+    setnames(teamAllowed,"new_column",paste0(rolltime,NFLvalues[i]))
   }
   fwrite(teamAllowed, path2)
 }
@@ -227,14 +228,14 @@ createteamstatsallowed<- function(roll,week) {
 #Function 5
 ###############
 #Function to create stats what a player achieved
-createplayerstats<- function(roll, week) {
+createplayerstats<- function(rolltime, numweeks) {
   
   statsandscores<-fread("./project/volume/data/processed/StatsandBoxscores.csv")
   player_achieved<-statsandscores
 
   #remove file if it already exists to not override the data
   path1<-"./project/volume/data/processed/playerstats"
-  path2<-paste0(path1,roll,".csv")
+  path2<-paste0(path1,rolltime,".csv")
   if (file.exists(path2)) {
     file.remove(path2)}
   
@@ -247,8 +248,8 @@ createplayerstats<- function(roll, week) {
   setkey(player_achieved,Player,cumulativeweek)
   
   for (i in 1:length(NFLvalues)) {
-    player_achieved[, new_column := Reduce(`+`, shift(get(NFLvalues[i]), 1:week))]
-    setnames(player_achieved,"new_column",paste0(roll,NFLvalues[i]))
+    player_achieved[, new_column := Reduce(`+`, shift(get(NFLvalues[i]), 1:numweeks))]
+    setnames(player_achieved,"new_column",paste0(rolltime,NFLvalues[i]))
   }
   fwrite(player_achieved, path2)
 }
@@ -257,39 +258,42 @@ createplayerstats<- function(roll, week) {
 #Function 6
 ###############
 #Function to create a set of training data
-createtrainset <- function(roll, week) {
+createtrainset <- function(rolltime, numweeks) {
   
   #remove file if it already exists to not override the data
   path1<-"./project/volume/data/processed/train"
-  path2<-paste0(path1,roll,".csv")
+  path2<-paste0(path1,rolltime,".csv")
   if (file.exists(path2)) {
     file.remove(path2)}
   
   path3 <- "./project/volume/data/processed/playerstats"
   path4 <- "./project/volume/data/processed/teamstats"
-  path5 <- paste0(path3,roll,".csv")
-  path6 <- paste0(path4,roll,".csv")
+  path5 <- paste0(path3,rolltime,".csv")
+  path6 <- paste0(path4,rolltime,".csv")
   
   playerstats<-fread(path5)
   teamstats<-fread(path6)
   
-  playerstats<-playerstats[,.(season,week,Tm,Player,Pos,PPRFantasyPoints,game_id,Opponent,paste0(roll,PassingYds),
-                              paste0(roll,PassingTD), paste0(roll,Int),paste0(roll,PassingAtt),paste0(roll,Cmp),
-                              paste0(roll,RushingAtt),paste0(roll,RushingYds),paste0(roll,RushingTD),paste0(roll,Rec),
-                              paste0(roll,Tgt),paste0(roll,ReceivingYds),paste0(roll,ReceivingTD), paste0(roll,FL),
-                              paste0(roll,PPRFantasyPoints),paste0(roll,Tgt_share),paste0(roll,Rushing_share),
-                              paste0(roll,Passing_share),paste0(roll,Teamtotalpassingattempts),
-                              paste0(roll,Teamtotalrushingattempts),paste0(roll,Teamvariancepassingshare),
-                              paste0(roll,Teamvariancerushingshare),paste0(roll,Teamvariancetargetshare))]
+  playerstats<-playerstats[,.(season,week,Tm,Player,Pos,PPRFantasyPoints,game_id,Opponent,paste0(roll,numweeks,PassingYds),
+                              paste0(roll,numweeks,PassingTD),paste0(roll,numweeks,Int),paste0(roll,numweeks,PassingAtt),
+                              paste0(roll,numweeks,Cmp),paste0(roll,numweeks,RushingAtt),paste0(roll,numweeks,RushingYds),
+                              paste0(roll,numweeks,RushingTD),paste0(roll,numweeks,Rec),paste0(roll,numweeks,Tgt),
+                              paste0(roll,numweeks,ReceivingYds),paste0(roll,numweeks,ReceivingTD), paste0(roll,numweeks,FL),
+                              paste0(roll,numweeks,PPRFantasyPoints),paste0(roll,numweeks,Tgt_share),
+                              paste0(roll,numweeks,Rushing_share),paste0(roll,numweeks,Passing_share),
+                              paste0(roll,numweeks,Teamtotalpassingattempts),paste0(roll,numweeks,Teamtotalrushingattempts),
+                              paste0(roll,numweeks,Teamvariancepassingshare),paste0(roll,numweeks,Teamvariancerushingshare),
+                              paste0(roll,numweeks,Teamvariancetargetshare))]
   
-  teamstats<-teamstats[,.(season,week,Tm,cumulativeweek,game_id,Opponent,paste0(roll,PassingYds),
-                          paste0(roll,PassingTD), paste0(roll,Int),paste0(roll,PassingAtt),paste0(roll,Cmp),
-                          paste0(roll,RushingAtt),paste0(roll,RushingYds),paste0(roll,RushingTD),paste0(roll,Rec),
-                          paste0(roll,Tgt),paste0(roll,ReceivingYds),paste0(roll,ReceivingTD), paste0(roll,FL),
-                          paste0(roll,PPRFantasyPoints),paste0(roll,Tgt_share),paste0(roll,Rushing_share),
-                          paste0(roll,Passing_share),paste0(roll,Teamtotalpassingattempts),
-                          paste0(roll,Teamtotalrushingattempts),paste0(roll,Teamvariancepassingshare),
-                          paste0(roll,Teamvariancerushingshare),paste0(roll,Teamvariancetargetshare))]
+  teamstats<-teamstats[,.(season,week,Tm,cumulativeweek,game_id,Opponent,paste0(roll,numweeks,PassingYds),
+                          paste0(roll,numweeks,PassingTD),paste0(roll,numweeks,Int),paste0(roll,numweeks,PassingAtt),
+                          paste0(roll,numweeks,Cmp),paste0(roll,numweeks,RushingAtt),paste0(roll,numweeks,RushingYds),
+                          paste0(roll,numweeks,RushingTD),paste0(roll,numweeks,Rec),paste0(roll,numweeks,Tgt),
+                          paste0(roll,numweeks,ReceivingYds),paste0(roll,numweeks,ReceivingTD), paste0(roll,numweeks,FL),
+                          paste0(roll,numweeks,PPRFantasyPoints),paste0(roll,numweeks,Tgt_share),paste0(roll,numweeks,Rushing_share),
+                          paste0(roll,numweeks,Passing_share),paste0(roll,numweeks,Teamtotalpassingattempts),
+                          paste0(roll,numweeks,Teamtotalrushingattempts),paste0(roll,numweeks,Teamvariancepassingshare),
+                          paste0(roll,numweeks,Teamvariancerushingshare),paste0(roll,numweeks,Teamvariancetargetshare))]
   
   setnames(playerstats, c(paste0("roll",week,"PassingYds"),paste0("roll",week,"PassingTD"),paste0("roll",week,"Int"),
                           paste0("roll",week,"PassingAtt"),paste0("roll",week,"Cmp"),paste0("roll",week,"RushingAtt"),
@@ -427,13 +431,13 @@ createtrainset <- function(roll, week) {
 ###############
 #Main Function
 ###############
-datawrangle<-function(roll, week){
+datawrangle<-function(rolltime, numweeks){
   cleanboxscores()
   cleanstatistics()
   createmasterfile()
-  createplayerstats(roll,week)
-  createteamstatsallowed(roll,week)
-  createtrainset(roll,week)
+  createplayerstats(rolltime,numweeks)
+  createteamstatsallowed(rolltime,numweeks)
+  createtrainset(rolltime,numweeks)
 }
 
-datawrangle(roll,week)
+datawrangle(rolltime,numweeks)
