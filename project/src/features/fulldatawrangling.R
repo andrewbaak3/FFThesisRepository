@@ -273,68 +273,31 @@ createtrainset <- function(rolltime, numweeks) {
   
   playerstats<-fread(path5)
   teamstats<-fread(path6)
+
   
-  playerstats<-playerstats[,.(season,week,Tm,Player,Pos,PPRFantasyPoints,game_id,Opponent,paste0(roll,numweeks,PassingYds),
-                              paste0(roll,numweeks,PassingTD),paste0(roll,numweeks,Int),paste0(roll,numweeks,PassingAtt),
-                              paste0(roll,numweeks,Cmp),paste0(roll,numweeks,RushingAtt),paste0(roll,numweeks,RushingYds),
-                              paste0(roll,numweeks,RushingTD),paste0(roll,numweeks,Rec),paste0(roll,numweeks,Tgt),
-                              paste0(roll,numweeks,ReceivingYds),paste0(roll,numweeks,ReceivingTD), paste0(roll,numweeks,FL),
-                              paste0(roll,numweeks,PPRFantasyPoints),paste0(roll,numweeks,Tgt_share),
-                              paste0(roll,numweeks,Rushing_share),paste0(roll,numweeks,Passing_share),
-                              paste0(roll,numweeks,Teamtotalpassingattempts),paste0(roll,numweeks,Teamtotalrushingattempts),
-                              paste0(roll,numweeks,Teamvariancepassingshare),paste0(roll,numweeks,Teamvariancerushingshare),
-                              paste0(roll,numweeks,Teamvariancetargetshare))]
+  playerdrops<-c("StandardFantasyPoints","HalfPPRFantasyPoints","Tmscore","Opponentscore","cumulativeweek", "PassingYds",
+           "PassingTD","Int","PassingAtt","Cmp","RushingAtt","RushingYds","RushingTD","Rec","Tgt","ReceivingYds",
+           "ReceivingTD","FL","Tgt_share","Rushing_share","Passing_share","Teamtotalpassingattempts","Teamtotalrushingattempts",
+           "Teamvariancepassingshare","Teamvariancerushingshare","Teamvariancetargetshare",
+           paste0("roll",numweeks,"StandardFantasyPoints"), paste0("roll",numweeks,"HalfPPRFantasyPoints"))
   
-  teamstats<-teamstats[,.(season,week,Tm,cumulativeweek,game_id,Opponent,paste0(roll,numweeks,PassingYds),
-                          paste0(roll,numweeks,PassingTD),paste0(roll,numweeks,Int),paste0(roll,numweeks,PassingAtt),
-                          paste0(roll,numweeks,Cmp),paste0(roll,numweeks,RushingAtt),paste0(roll,numweeks,RushingYds),
-                          paste0(roll,numweeks,RushingTD),paste0(roll,numweeks,Rec),paste0(roll,numweeks,Tgt),
-                          paste0(roll,numweeks,ReceivingYds),paste0(roll,numweeks,ReceivingTD), paste0(roll,numweeks,FL),
-                          paste0(roll,numweeks,PPRFantasyPoints),paste0(roll,numweeks,Tgt_share),paste0(roll,numweeks,Rushing_share),
-                          paste0(roll,numweeks,Passing_share),paste0(roll,numweeks,Teamtotalpassingattempts),
-                          paste0(roll,numweeks,Teamtotalrushingattempts),paste0(roll,numweeks,Teamvariancepassingshare),
-                          paste0(roll,numweeks,Teamvariancerushingshare),paste0(roll,numweeks,Teamvariancetargetshare))]
+  teamdrops<-c("PassingYds","PassingTD","Int","PassingAtt","Cmp","RushingAtt","RushingYds","RushingTD","Rec","Tgt","ReceivingYds",
+               "ReceivingTD","FL","Tgt_share","Rushing_share","Passing_share","Teamtotalpassingattempts","Teamtotalrushingattempts",
+               "Teamvariancepassingshare","Teamvariancerushingshare","Teamvariancetargetshare", "PPRFantasyPoints", 
+               "StandardFantasyPoints", "HalfPPRFantasyPoints",paste0("roll",numweeks,"StandardFantasyPoints"), 
+               paste0("roll",numweeks,"HalfPPRFantasyPoints"),paste0("roll",numweeks,"PPRFantasyPoints"))
   
-  setnames(playerstats, c(paste0("roll",week,"PassingYds"),paste0("roll",week,"PassingTD"),paste0("roll",week,"Int"),
-                          paste0("roll",week,"PassingAtt"),paste0("roll",week,"Cmp"),paste0("roll",week,"RushingAtt"),
-                          paste0("roll",week,"RushingYds"),paste0("roll",week,"RushingTD"),paste0("roll",week,"Rec"),
-                          paste0("roll",week,"Tgt"),paste0("roll",week,"ReceivingYds"),paste0("roll",week,"ReceivingTD"),
-                          paste0("roll",week,"FL"),paste0("roll",week,"PPRFantasyPoints"),paste0("roll",week,"Tgt_share"),
-                          paste0("roll",week,"Rushing_share"),paste0("roll",week,"Passing_share"),
-                          paste0("roll",week,"Teamtotalpassingattempts"),paste0("roll",week,"Teamtotalrushingattempts"),
-                          paste0("roll",week,"Teamvariancepassingshare"),paste0("roll",week,"Teamvariancerushingshare"),
-                          paste0("roll",week,"Teamvariancetargetshare")), 
-           c(paste0("Player","roll",week,"PassingYds"),paste0("Player","roll",week,"PassingTD"),paste0("Player","roll",week,"Int"),
-             paste0("Player","roll",week,"PassingAtt"),paste0("Player","roll",week,"Cmp"),paste0("Player","roll",week,"RushingAtt"),
-             paste0("Player","roll",week,"RushingYds"),paste0("Player","roll",week,"RushingTD"),paste0("Player","roll",week,"Rec"),
-             paste0("Player","roll",week,"Tgt"),paste0("Player","roll",week,"ReceivingYds"),paste0("Player","roll",week,"ReceivingTD"),
-             paste0("Player","roll",week,"FL"),paste0("Player","roll",week,"PPRFantasyPoints"),paste0("Player","roll",week,"Tgt_share"),
-             paste0("Player","roll",week,"Rushing_share"),paste0("Player","roll",week,"Passing_share"),
-             paste0("Player","roll",week,"Teamtotalpassingattempts"),paste0("Player","roll",week,"Teamtotalrushingattempts"),
-             paste0("Player","roll",week,"Teamvariancepassingshare"),paste0("Player","roll",week,"Teamvariancerushingshare"),
-             paste0("Player","roll",week,"Teamvariancetargetshare")))
+  playerstats<-playerstats[,!playerdrops,with = FALSE]
+  teamstats<-teamstats[,!teamdrops,with=FALSE]
   
+  #Set Names
+  player_roll_names<-names(playerstats)[grep("roll",names(playerstats))]
+  new_names<-paste0("Player",player_roll_names)
+  setnames(playerstats, player_roll_names, new_names)
   
-  setnames(teamstats, c(paste0("roll",week,"PassingYds"),paste0("roll",week,"PassingTD"),paste0("roll",week,"Int"),
-                        paste0("roll",week,"PassingAtt"),paste0("roll",week,"Cmp"),paste0("roll",week,"RushingAtt"),
-                        paste0("roll",week,"RushingYds"),paste0("roll",week,"RushingTD"),paste0("roll",week,"Rec"),
-                        paste0("roll",week,"Tgt"),paste0("roll",week,"ReceivingYds"),paste0("roll",week,"ReceivingTD"),
-                        paste0("roll",week,"FL"),paste0("roll",week,"PPRFantasyPoints"),paste0("roll",week,"Tgt_share"),
-                        paste0("roll",week,"Rushing_share"),paste0("roll",week,"Passing_share"),
-                        paste0("roll",week,"Teamtotalpassingattempts"),paste0("roll",week,"Teamtotalrushingattempts"),
-                        paste0("roll",week,"Teamvariancepassingshare"),paste0("roll",week,"Teamvariancerushingshare"),
-                        paste0("roll",week,"Teamvariancetargetshare")), 
-           c(paste0("TeamAllowed","roll",week,"PassingYds"),paste0("TeamAllowed","roll",week,"PassingTD"),paste0("TeamAllowed","roll",week,"Int"),
-             paste0("TeamAllowed","roll",week,"PassingAtt"),paste0("TeamAllowed","roll",week,"Cmp"),paste0("TeamAllowed","roll",week,"RushingAtt"),
-             paste0("TeamAllowed","roll",week,"RushingYds"),paste0("TeamAllowed","roll",week,"RushingTD"),paste0("TeamAllowed","roll",week,"Rec"),
-             paste0("TeamAllowed","roll",week,"Tgt"),paste0("TeamAllowed","roll",week,"ReceivingYds"),paste0("TeamAllowed","roll",week,"ReceivingTD"),
-             paste0("TeamAllowed","roll",week,"FL"),paste0("TeamAllowed","roll",week,"PPRFantasyPoints"),paste0("TeamAllowed","roll",week,"Tgt_share"),
-             paste0("TeamAllowed","roll",week,"Rushing_share"),paste0("TeamAllowed","roll",week,"Passing_share"),
-             paste0("TeamAllowed","roll",week,"Teamtotalpassingattempts"),paste0("TeamAllowed","roll",week,"Teamtotalrushingattempts"),
-             paste0("TeamAllowed","roll",week,"Teamvariancepassingshare"),paste0("TeamAllowed","roll",week,"Teamvariancerushingshare"),
-             paste0("TeamAllowed","roll",week,"Teamvariancetargetshare")))
-  
-  
+  team_roll_names<-names(teamstats)[grep("roll",names(teamstats))]
+  new_team_names<-paste0("TeamAllowed",team_roll_names)
+  setnames(teamstats, team_roll_names, new_team_names)
 
   
   #Set Keys and Merge Together PlayerStats and Teamstats to create train set
@@ -344,88 +307,25 @@ createtrainset <- function(rolltime, numweeks) {
   
   #Calculate difference values for applicable rows
   
-  #ReceivingYds
-  scale_transform<-preProcess(train[,.(paste0(Playerroll,week,ReceivingYds),paste0(TeamAllowedroll,week,ReceivingYds))],
-                              method=c("center","scale"))
-  scaled_receiving_yds<-predict(scale_transform,train[,.(paste0(Playerroll,week,ReceivingYds),paste0(TeamAllowedroll,week,ReceivingYds))])
-  train$ReceivingYds_Dif<-scaled_receiving_yds$paste0(Playerroll,week,ReceivingYds)-scaled_receiving_yds$paste0(TeamAllowedroll,week,ReceivingYds)
-  #RushingYds
-  scale_transform2<-preProcess(train[,.(paste0(Playerroll,week,RushingYds),paste0(TeamAllowedroll,week,RushingYds))],
-                               method=c("center","scale"))
-  scaled_rushing_yds<-predict(scale_transform2,train[,.(paste0(Playerroll,week,RushingYds),paste0(TeamAllowedroll,week,RushingYds))])
-  train$RushingYds_Dif<-scaled_rushing_yds$paste0(Playerroll,week,RushingYds)-scaled_rushing_yds$paste0(TeamAllowedroll,week,RushingYds)
-  #PassingYds
-  scale_transform3<-preProcess(train[,.(paste0(Playerroll,week,PassingYds),paste0(TeamAllowedroll,week,PassingYds))],
-                               method=c("center","scale"))
-  scaled_passing_yds<-predict(scale_transform3,train[,.(paste0(Playerroll,week,PassingYds),paste0(TeamAllowedroll,week,PassingYds))])
-  train$PassingYds_Dif<-scaled_passing_yds$paste0(Playerroll,week,PassingYds)-scaled_passing_yds$paste0(TeamAllowedroll,week,PassingYds)
-  #Targets
-  scale_transform4<-preProcess(train[,.(paste0(Playerroll,week,Tgt),paste0(TeamAllowedroll,week,Tgt))],
-                               method=c("center","scale"))
-  scaled_targets<-predict(scale_transform4,train[,.(paste0(Playerroll,week,Tgt),paste0(TeamAllowedroll,week,Tgt))])
-  train$Targets_Dif<-scaled_targets$paste0(Playerroll,week,Tgt)-scaled_targets$paste0(TeamAllowedroll,week,Tgt)
-  #PassingAttempts
-  scale_transform5<-preProcess(train[,.(paste0(Playerroll,week,PassingAtt),paste0(TeamAllowedroll,week,PassingAtt))],
-                               method=c("center","scale"))
-  scaled_passingattempts<-predict(scale_transform5,train[,.(paste0(Playerroll,week,PassingAtt),paste0(TeamAllowedroll,week,PassingAtt))])
-  train$Passing_Attempts_Dif<-scaled_passingattempts$paste0(Playerroll,week,PassingAtt)-scaled_passingattempts$paste0(TeamAllowedroll,week,PassingAtt)
-  #RushingAttempts
-  scale_transform6<-preProcess(train[,.(paste0(Playerroll,week,RushingAtt),paste0(TeamAllowedroll,week,RushingAtt))],
-                               method=c("center","scale"))
-  scaled_rushingattempts<-predict(scale_transform6,train[,.(paste0(Playerroll,week,RushingAtt),paste0(TeamAllowedroll,week,RushingAtt))])
-  train$Rushing_Attempts_Dif<-scaled_rushingattempts$paste0(Playerroll,week,RushingAtt)-scaled_rushingattempts$paste0(TeamAllowedroll,week,RushingAtt)
-  #ReceivingTDs
-  scale_transform7<-preProcess(train[,.(paste0(Playerroll,week,ReceivingTD),paste0(TeamAllowedroll,week,ReceivingTD))],
-                               method=c("center","scale"))
-  scaled_receivingtds<-predict(scale_transform7,train[,.(paste0(Playerroll,week,ReceivingTD),paste0(TeamAllowedroll,week,ReceivingTD))])
-  train$ReceivingTDs_Dif<-scaled_receivingtds$paste0(Playerroll,week,ReceivingTD)-scaled_receivingtds$paste0(TeamAllowedroll,week,ReceivingTD)
-  #RushingTDs
-  scale_transform8<-preProcess(train[,.(paste0(Playerroll,week,RushingTD),paste0(TeamAllowedroll,week,RushingTD))],
-                               method=c("center","scale"))
-  scaled_rushingtds<-predict(scale_transform8,train[,.(paste0(Playerroll,week,RushingTD),paste0(TeamAllowedroll,week,RushingTD))])
-  train$RushingTDs_Dif<-scaled_rushingtds$paste0(Playerroll,week,RushingTD)-scaled_rushingtds$paste0(TeamAllowedroll,week,RushingTD)
-  #PassingTDs
-  scale_transform9<-preProcess(train[,.(paste0(Playerroll,week,PassingTD),paste0(TeamAllowedroll,week,PassingTD))],
-                               method=c("center","scale"))
-  scaled_passingtds<-predict(scale_transform9,train[,.(paste0(Playerroll,week,PassingTD),paste0(TeamAllowedroll,week,PassingTD))])
-  train$PassingTDs_Dif<-scaled_passingtds$paste0(Playerroll,week,PassingTD)-scaled_passingtds$paste0(TeamAllowedroll,week,PassingTD)
-  #RushingVar
-  scale_transform10<-preProcess(train[,.(paste0(Playerroll,week,Teamvariancerushingshare),paste0(TeamAllowedroll,week,Teamvariancerushingshare))],
-                                method=c("center","scale"))
-  scaled_rushingshare<-predict(scale_transform10,train[,.(paste0(Playerroll,week,Teamvariancerushingshare),paste0(TeamAllowedroll,week,Teamvariancerushingshare))])
-  train$Rushing_Var_Dif<-scaled_rushingshare$paste0(Playerroll,week,Teamvariancerushingshare)-scaled_rushingshare$paste0(TeamAllowedroll,week,Teamvariancerushingshare)
-  #PassingVar
-  scale_transform11<-preProcess(train[,.(paste0(Playerroll,week,Teamvariancepassingshare),paste0(TeamAllowedroll,week,Teamvariancepassingshare))],
-                                method=c("center","scale"))
-  scaled_passingshare<-predict(scale_transform11,train[,.(paste0(Playerroll,week,Teamvariancepassingshare),paste0(TeamAllowedroll,week,Teamvariancepassingshare))])
-  train$Passing_Var_Dif<-scaled_passingshare$paste0(Playerroll,week,Teamvariancepassingshare)-scaled_passingshare$paste0(TeamAllowedroll,week,Teamvariancepassingshare)
-  #TargetVar
-  scale_transform12<-preProcess(train[,.(paste0(Playerroll,week,Teamvariancetargetshare),paste0(TeamAllowedroll,week,Teamvariancetargetshare))],
-                                method=c("center","scale"))
-  scaled_tgtshare<-predict(scale_transform12,train[,.(paste0(Playerroll,week,Teamvariancetargetshare),paste0(TeamAllowedroll,week,Teamvariancetargetshare))])
-  train$Tgt_Var_Dif<-scaled_tgtshare$paste0(Playerroll,week,Teamvariancetargetshare)-scaled_tgtshare$paste0(TeamAllowedroll,week,Teamvariancetargetshare)
-  #RushingShare
-  scale_transform13<-preProcess(train[,.(paste0(Playerroll,week,Rushing_share),paste0(TeamAllowedroll,week,Rushing_share))],
-                                method=c("center","scale"))
-  scaled_rushing<-predict(scale_transform13,train[,.(paste0(Playerroll,week,Rushing_share),paste0(TeamAllowedroll,week,Rushing_share))])
-  train$Rushing_Share_Dif<-scaled_rushing$paste0(Playerroll,week,Rushing_share)-scaled_rushing$paste0(TeamAllowedroll,week,Rushing_share)
-  #PassingShare
-  scale_transform14<-preProcess(train[,.(paste0(Playerroll,week,Passing_share),paste0(TeamAllowedroll,week,Passing_share))],
-                                method=c("center","scale"))
-  scaled_passing<-predict(scale_transform14,train[,.(paste0(Playerroll,week,Passing_share),paste0(TeamAllowedroll,week,Passing_share))])
-  train$Passing_Share_Dif<-scaled_passing$paste0(Playerroll,week,Passing_share)-scaled_passing$paste0(TeamAllowedroll,week,Passing_share)
-  #TargetShare
-  scale_transform15<-preProcess(train[,.(paste0(Playerroll,week,Tgt_share),paste0(TeamAllowedroll,week,Tgt_share))],
-                                method=c("center","scale"))
-  scaled_tgt<-predict(scale_transform15,train[,.(paste0(Playerroll,week,Tgt_share),paste0(TeamAllowedroll,week,Tgt_share))])
-  train$Tgt_Share_Dif<-scaled_tgt$paste0(Playerroll,week,Tgt_share)-scaled_tgt$paste0(TeamAllowedroll,week,Tgt_share)
+  #make a value list
+  statslist<- c("ReceivingYds","RushingYds","PassingYds","Tgt","PassingAtt","RushingAtt","ReceivingTD","RushingTD",
+                "PassingTD","Teamvariancerushingshare","Teamvariancepassingshare","Teamvariancetargetshare","Rushing_share",
+                "Passing_share","Tgt_share")
+  
+   for (i in 1:length(statslist)) {
+    keep<-c(paste0("Playerroll",numweeks,statslist[i]),paste0("TeamAllowedroll",numweeks,statslist[i]))
+    sub_train<-train[,keep,with=FALSE]
+    scale_transform<-preProcess(sub_train, method = c("center","scale"))
+    scaled_values<-predict(scale_transform, sub_train)
+    train$value_dif<-scaled_values[,1]-scaled_values[,2]
+    setnames(train,"value_dif",paste0(statslist[i],"_Dif"))
+  }
 
   
   #Write out train set to processed folder
   fwrite(train, path2)
   
 }
-
 
 
 ###############
