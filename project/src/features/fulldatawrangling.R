@@ -24,8 +24,9 @@ numweeks<-opt$week
 #Function to properly format all box scores and output them into one file
 cleanboxscores <- function(){
   #read in path and list files in path
-  path<-"./project/volume/data/external/SeasonBoxScores/"
+  path<-"./project/volume/data/external/SeasonBoxScores"
   year_files<-list.files(path)
+  message(year_files)
   
   #remove file if it already exists to prevent overwriting
   if (file.exists("./project/volume/data/interim/allBoxscores.csv")) {
@@ -33,7 +34,7 @@ cleanboxscores <- function(){
   
   #for loop to search through all files in the path
   for (i in 1:length(year_files)) {
-    
+    message(year_files[i])
     #set year equal to the year of the file being looked at
     year <- year_files[i]
     data_table<-fread(paste0(path,"/",year_files[i]))
@@ -53,6 +54,7 @@ cleanstatistics<- function() {
   #read in path of where data is located and list files in that path
   path1<-"./project/volume/data/external/external_data/weekly"
   year_files<- list.files(path1)
+
   
   #remove file if it already exists to not override the data
   if (file.exists("./project/volume/data/interim/gamePlayerstats.csv")) {

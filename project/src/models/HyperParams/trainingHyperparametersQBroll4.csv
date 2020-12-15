@@ -1,0 +1,13 @@
+objective,gamma,booster,eval_metric,eta,max_depth,min_child_weight,subsample,colsample_bytree,tree_method,best_ntrees,train_error,test_error
+reg:linear,0.01,gbtree,rmse,0.01,10,5,0.99,0.95,hist,448,5.081083,6.887836
+reg:linear,0.01,gbtree,rmse,0.01,10,5,0.95,0.95,hist,497,4.995557,6.877836
+reg:linear,0.05,gbtree,rmse,0.05,5,10,0.95,0.95,hist,117,6.445648,6.833856
+reg:linear,0.05,gbtree,rmse,0.05,5,10,0.95,0.9,hist,117,6.449718,6.843943
+reg:linear,0.1,gbtree,rmse,0.1,2,25,0.9,0.9,hist,170,6.608516,6.852501
+reg:linear,0.1,gbtree,rmse,0.1,5,20,0.9,0.9,hist,124,6.307314,6.837223
+reg:linear,0.1,gbtree,rmse,0.1,2,30,0.9,0.9,hist,117,6.625381,6.850359
+reg:linear,0.1,gbtree,rmse,0.1,2,27,0.9,0.9,hist,226,6.588458,6.843698
+reg:linear,0.2,gbtree,rmse,0.2,2,50,0.8,0.8,hist,92,6.602959,6.838085
+reg:linear,0.2,gbtree,rmse,0.2,2,50,0.7,0.7,hist,104,6.598259,6.843771
+reg:linear,0.2,gbtree,rmse,0.2,2,35,0.8,0.8,hist,107,6.596269,6.842124
+reg:linear,0.2,gbtree,rmse,0.2,2,40,0.8,0.8,hist,123,6.587216,6.842003
