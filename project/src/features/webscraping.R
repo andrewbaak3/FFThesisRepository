@@ -3,7 +3,6 @@ library(XML)
 library(data.table)
 
 
-
 #this function is useful for grabbing all links on a page
 links <- function(URL) 
 {
@@ -48,9 +47,9 @@ for (i in 1:length(seasons)) {
     
     for (k in 1:length(divtables)) {
       temp<-html_nodes(divtables[k], ".tr")
-      
-      temp<-data.table(temp)
-      
+      for (l in 1:length(temp)) {
+        DT<- 
+      }
     }
   }
 }
