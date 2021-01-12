@@ -31,11 +31,12 @@ result<-compact(result)
 #Split result into a list with 3 pieces (link, season, week)
 result<-split(result, result$link)
 
+#Create final data table with all injury information
 DT <- map_df(result, function(x){ 
   page <- read_html(x[[1]])
   data.table(
-    Season = x[[2]],
-    Week = x[[3]],
+    season = x[[2]],
+    week = x[[3]],
     Player = page %>% html_nodes('.divtable .td:nth-child(1) b') %>% html_text(),
     Injury = page %>% html_nodes('.divtable .td:nth-child(2)') %>% html_text(),
     Wed = page %>% html_nodes('.divtable .td:nth-child(3)') %>% html_text(),
@@ -48,7 +49,9 @@ DT <- map_df(result, function(x){
 
 #Clean up DT
 
-DT<-DT[order(Season,Week)]
+#Order by season and week
+DT<-DT[order(season,week)]
+
 #Remove everything from DT$GameStatus except for status 
 DT$GameStatus<-gsub("[0-9]","",DT$GameStatus)
 DT$GameStatus<-gsub("[()]","",DT$GameStatus)
@@ -61,13 +64,16 @@ DT$GameStatus<-gsub(" ", "", DT$GameStatus)
 
 #Remove -- values in each of the columns
 DT[DT$GameStatus == "--"]$GameStatus<-NA
-DT[DT$Season == "--"]$Season<-NA
-DT[DT$Week == "--"]$Week<-NA
+DT[DT$season == "--"]$season<-NA
+DT[DT$week == "--"]$week<-NA
 DT[DT$Player == "--"]$Player<-NA
 DT[DT$Wed == "--"]$Wed<-NA
 DT[DT$Thu == "--"]$Thu<-NA
 DT[DT$Fri == "--"]$Fri<-NA
 DT[DT$Injury == "--"]$Injury<-NA
+
+#Set all injuries to lowercase to help get rid of duplicates
+DT$Injury<-tolower(DT$Injury)
 
 #Create ID column for DT
 DT$id<-1:nrow(DT)
@@ -76,16 +82,21 @@ DT$id<-1:nrow(DT)
 types_tab<-as.data.table(tstrsplit(DT$Injury,","))
 types_tab$id<-DT$id
 m_types_tab<-melt(types_tab,id.vars = "id")
+m_types_tab$value<-trimws(m_types_tab$value, which = "both")
+m_types_tab$value<-gsub(" ", "_",m_types_tab$value)
+m_types_tab$value<-gsub("/", "_",m_types_tab$value)
+m_types_tab$value<-gsub("-", "", m_types_tab$value)
 m_types_tab<-m_types_tab[!is.na(m_types_tab$value)]
 m_types_tab$True<-1
 types_tab<-dcast(m_types_tab,id ~ value,length,value.var="True")
 
+#Merge tables together into one big table
+InjuryTable<-merge(DT,types_tab, by = "id")
 
-
-setkey(DT, id)
-setkey(types_tab, id)
-merge(DT,types_tab, )
+#Get rid of columns not of interest 
+drops<-c("id","Injury")
+InjuryTable<-InjuryTable[, !drops, with = FALSE]
 
 
 #Write out injury data table
-fwrite(DT,"./project/volume/data/interim/injuryreports.csv")
+fwrite(InjuryTable,"./project/volume/data/interim/injuryreports.csv")
