@@ -457,7 +457,7 @@ createtrainset <- function(rolltime, numweeks) {
   #Set keys for both datasets
   setkey(train,season,week,mergeName)
   setkey(injurydata,season,week,mergeName)
-  finaltrain<-merge(train,injurydata)
+  finaltrain<-merge(train,injurydata, all.x = TRUE)
   
   
   #Get rid of columns not of interest 
