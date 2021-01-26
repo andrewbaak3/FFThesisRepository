@@ -32,10 +32,13 @@ runModel<- function(rolltime,pos) {
   #read in hyperparameter data
   param_table<-fread("./project/src/models/HyperParams/hyperparametertuning.csv")
   
-  sample_pos<-pos
+  train[train$Pos=="HB"]$Pos<-"RB"
   
-  train1<-train[season<2019]
-  test1<-train[season==2019]
+  sample_pos<-pos
+  train<-train[Pos==sample_pos]
+  
+  train1<-train[season<2017]
+  test1<-train[season==2017]
   
   #Prep Data for Modeling
   train1_y<-train1$PPRFantasyPoints
@@ -49,12 +52,43 @@ runModel<- function(rolltime,pos) {
   train1<-train1[, !drops, with = FALSE]
   test1<-test1[, !drops, with = FALSE]
   
+  #Fix game status columns to remove null values
+  train1[train1==""]<-"None"
+  train1$Wed[is.na(train1$Wed)]<-"None"
+  train1$Thu[is.na(train1$Thu)]<-"None"
+  train1$Fri[is.na(train1$Fri)]<-"None"
+  train1$GameStatus[is.na(train1$GameStatus)]<-"None"
+  test1$Wed[is.na(test1$Wed)]<-"None"
+  test1$Thu[is.na(test1$Thu)]<-"None"
+  test1$Fri[is.na(test1$Fri)]<-"None"
+  test1$GameStatus[is.na(test1$GameStatus)]<-"None"
+  test1[test1==""]<-"None"
+  
+  #Find zero variance columns and remove them
+  summaryvar<-nearZeroVar(train1,saveMetrics = T)
+  injurycols<-rownames(summaryvar)
+  summaryvar<-data.table(summaryvar)
+  summaryvar$columnames<-injurycols
+  zerovarcols<-summaryvar[zeroVar==T]
+  
+  novardrops<-zerovarcols$columnames
+  
+  train1<-train1[, !novardrops, with = FALSE]
+  test1<-test1[, !novardrops, with = FALSE]
+  
+  #train1$train<-1
+  #test1$train<-0
+  
+  master<-rbind(train1,test1)
+  
+  #master$train<-NULL
+  #train1$train<-NULL
+  #test1$train<-NULL
   
   #Need to keep position in as a variable and create dummies for this purpose
-  dummies<-dummyVars(PPRFantasyPoints~., data=train1)
+  dummies<-dummyVars(PPRFantasyPoints~., data=master)
   x_train<-predict(dummies, newdata = train1)
   x_test<-predict(dummies, newdata = test1)
-  
   
   #Create proper representation of data for modeling
   dtrain <- xgb.DMatrix(x_train,label=train1_y,missing=NA)
@@ -104,6 +138,11 @@ runModel<- function(rolltime,pos) {
     path5<-paste0(path4,rolltime,".csv")
     fwrite(train_param,path5, append = T)
   }
+  
+  cols<-XGB_model[["feature_names"]]
+  importance <- xgb.importance(feature_names = cols, model = XGB_model)
+  print(xgb.plot.importance(importance_matrix = importance, top_n = 50))
+  test1$PPRFantasyPoints<-predict(XGB_model, newdata=dtest)
 }
   
 ###############

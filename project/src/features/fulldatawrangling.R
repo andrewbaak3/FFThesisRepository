@@ -27,6 +27,9 @@ numweeks<-opt$week
 ###############
 #Function to properly format all box scores and output them into one file
 cleanboxscores <- function(){
+  
+  print("Running Function 1")
+  
   #read in path and list files in path
   path<-"./project/volume/data/external/SeasonBoxScores"
   year_files<-list.files(path)
@@ -47,6 +50,8 @@ cleanboxscores <- function(){
     #write out result for each year to one big file
     fwrite(data_table,"./project/volume/data/interim/allBoxscores.csv", append=T)
   }
+  
+  print("Function 1 Complete")
 }
 
 
@@ -55,6 +60,9 @@ cleanboxscores <- function(){
 ###############
 #Function to properly format all player statistics from each game for which a record exists
 cleanstatistics<- function() {
+  
+  print("Running Function 2")
+  
   #read in path of where data is located and list files in that path
   path1<-"./project/volume/data/external/external_data/weekly"
   year_files<- list.files(path1)
@@ -89,6 +97,7 @@ cleanstatistics<- function() {
     #write out rbinded master files for each year to one big file  
     fwrite(master,"./project/volume/data/interim/gamePlayerstats.csv",append = T)
   }
+  print("Function 2 Complete")
 }
 
 
@@ -97,6 +106,9 @@ cleanstatistics<- function() {
 ###############
 #Function to properly merge together box scores and player stats
 createmasterfile <- function() {
+  
+  print("Running Function 3")
+  
   #remove file if it already exists
   if (file.exists("./project/volume/data/processed/StatsandBoxscores.csv")) {
     file.remove("./project/volume/data/processed/StatsandBoxscores.csv")}
@@ -195,6 +207,8 @@ createmasterfile <- function() {
   
   #Write out data
   fwrite(scoresandstats,"project/volume/data/processed/StatsandBoxscores.csv") 
+  
+  print("Function 3 Complete")
 }
 
 
@@ -204,10 +218,12 @@ createmasterfile <- function() {
 #Function to create stats what a team allowed
 createteamstatsallowed<- function(rolltime,numweeks) {
   
+  print("Running Function 4")
+  
   statsandscores<-fread("./project/volume/data/processed/StatsandBoxscores.csv")
   
 
-  #remove file if it already exists to not override the data
+  #remove file if it already exists to not overwrite the data
   path1<-"./project/volume/data/processed/teamstats"
   path2<-paste0(path1,rolltime,".csv")
   if (file.exists(path2)) {
@@ -229,12 +245,16 @@ createteamstatsallowed<- function(rolltime,numweeks) {
     setnames(teamAllowed,"new_column",paste0(rolltime,NFLvalues[i]))
   }
   fwrite(teamAllowed, path2)
+  
+  print("Function 4 Complete")
 }
 ###############
 #Function 5
 ###############
 #Function to create stats what a player achieved
 createplayerstats<- function(rolltime, numweeks) {
+  
+  print("Running Function 5")
   
   statsandscores<-fread("./project/volume/data/processed/StatsandBoxscores.csv")
   player_achieved<-statsandscores
@@ -258,6 +278,8 @@ createplayerstats<- function(rolltime, numweeks) {
     setnames(player_achieved,"new_column",paste0(rolltime,NFLvalues[i]))
   }
   fwrite(player_achieved, path2)
+  
+  print("Function 5 Complete")
 }
 
 
@@ -266,6 +288,8 @@ createplayerstats<- function(rolltime, numweeks) {
 ##############
 #Function to scrape injury data
 scrapeinjury <- function() {
+  
+  print("Running Function 6")
   
   #Remove file if file already exists
   if (file.exists("./project/volume/data/interim/injuryreports.csv")) {
@@ -364,6 +388,7 @@ scrapeinjury <- function() {
   #Write out injury data table
   fwrite(InjuryTable,"./project/volume/data/interim/injuryreports.csv")
   
+  print("Function 6 Complete")
 }
 
 ###############
@@ -371,6 +396,8 @@ scrapeinjury <- function() {
 ###############
 #Function to create a set of training data
 createtrainset <- function(rolltime, numweeks) {
+  
+  print("Running Function 7")
   
   #remove file if it already exists to not override the data
   path1<-"./project/volume/data/processed/train"
@@ -467,6 +494,8 @@ createtrainset <- function(rolltime, numweeks) {
   #Write out train set to processed folder
   fwrite(finaltrain, path2)
   
+  print("Function 7 Complete")
+  
 }
 
 ###############
@@ -476,8 +505,8 @@ datawrangle<-function(rolltime, numweeks){
   cleanboxscores()
   cleanstatistics()
   createmasterfile()
-  createplayerstats(rolltime,numweeks)
   createteamstatsallowed(rolltime,numweeks)
+  createplayerstats(rolltime,numweeks)
   scrapeinjury()
   createtrainset(rolltime,numweeks)
 }

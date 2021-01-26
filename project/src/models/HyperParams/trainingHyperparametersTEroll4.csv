@@ -11,3 +11,15 @@ reg:linear,0.2,gbtree,rmse,0.2,2,50,0.8,0.8,hist,74,6.617255,6.843665
 reg:linear,0.2,gbtree,rmse,0.2,2,50,0.7,0.7,hist,121,6.592198,6.847282
 reg:linear,0.2,gbtree,rmse,0.2,2,35,0.8,0.8,hist,60,6.625087,6.848325
 reg:linear,0.2,gbtree,rmse,0.2,2,40,0.8,0.8,hist,109,6.59524,6.845661
+reg:linear,0.01,gbtree,rmse,0.01,10,5,0.99,0.95,hist,202,3.532665,5.382213
+reg:linear,0.01,gbtree,rmse,0.01,10,5,0.95,0.95,hist,214,3.434408,5.32615
+reg:linear,0.05,gbtree,rmse,0.05,5,10,0.95,0.95,hist,50,5.189686,5.234604
+reg:linear,0.05,gbtree,rmse,0.05,5,10,0.95,0.9,hist,49,5.223627,5.233356
+reg:linear,0.1,gbtree,rmse,0.1,2,25,0.9,0.9,hist,25,5.585238,5.234478
+reg:linear,0.1,gbtree,rmse,0.1,5,20,0.9,0.9,hist,22,5.283317,5.254244
+reg:linear,0.1,gbtree,rmse,0.1,2,30,0.9,0.9,hist,26,5.581469,5.235996
+reg:linear,0.1,gbtree,rmse,0.1,2,27,0.9,0.9,hist,27,5.570173,5.240924
+reg:linear,0.2,gbtree,rmse,0.2,2,50,0.8,0.8,hist,13,5.57639,5.225228
+reg:linear,0.2,gbtree,rmse,0.2,2,50,0.7,0.7,hist,15,5.556128,5.2341
+reg:linear,0.2,gbtree,rmse,0.2,2,35,0.8,0.8,hist,13,5.584157,5.25176
+reg:linear,0.2,gbtree,rmse,0.2,2,40,0.8,0.8,hist,13,5.57044,5.227798
