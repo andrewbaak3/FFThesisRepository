@@ -6,8 +6,8 @@ createmasterfile <- function() {
   print("Running Function 3")
   
   #remove file if it already exists
-  if (file.exists("./project/volume/data/processed/StatsandBoxscores.csv")) {
-    file.remove("./project/volume/data/processed/StatsandBoxscores.csv")}
+  if (file.exists("./project/volume/data/interim/StatsandBoxscores.csv")) {
+    file.remove("./project/volume/data/interim/StatsandBoxscores.csv")}
   
   #read in player statistics table
   playerstats<-fread("./project/volume/data/interim/gamePlayerstats.csv")
@@ -102,7 +102,7 @@ createmasterfile <- function() {
   scoresandstats<-merge(scoresandstats,passingvariancestats, all.x=T)
   
   #Write out data
-  fwrite(scoresandstats,"project/volume/data/processed/StatsandBoxscores.csv") 
+  fwrite(scoresandstats,"project/volume/data/interim/StatsandBoxscores.csv") 
   
   print("Function 3 Complete")
 }

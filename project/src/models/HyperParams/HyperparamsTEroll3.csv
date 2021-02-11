@@ -1,0 +1,13 @@
+objective,gamma,booster,eval_metric,eta,max_depth,min_child_weight,subsample,colsample_bytree,tree_method,best_ntrees,train_error,test_error_train,cv_error
+reg:linear,0.01,gbtree,rmse,0.01,10,5,0.99,0.95,hist,320,2.832538,5.40646626176034,5.7803564
+reg:linear,0.01,gbtree,rmse,0.01,10,5,0.95,0.95,hist,315,2.903076,5.3743893336219,5.7512002
+reg:linear,0.05,gbtree,rmse,0.05,5,10,0.95,0.95,hist,65,5.090532,5.27942761229066,5.6661718
+reg:linear,0.05,gbtree,rmse,0.05,5,10,0.95,0.9,hist,67,5.087205,5.28004466245393,5.6675636
+reg:linear,0.1,gbtree,rmse,0.1,2,25,0.9,0.9,hist,44,5.538668,5.24889575038819,5.635094
+reg:linear,0.1,gbtree,rmse,0.1,5,20,0.9,0.9,hist,30,5.160329,5.25322779523341,5.6868798
+reg:linear,0.1,gbtree,rmse,0.1,2,30,0.9,0.9,hist,42,5.540978,5.2370377370239,5.6366112
+reg:linear,0.1,gbtree,rmse,0.1,2,27,0.9,0.9,hist,38,5.55163,5.22440229869681,5.638196
+reg:linear,0.2,gbtree,rmse,0.2,2,50,0.8,0.8,hist,21,5.547628,5.23525619870068,5.6415574
+reg:linear,0.2,gbtree,rmse,0.2,2,50,0.7,0.7,hist,18,5.570082,5.24518507244404,5.6371784
+reg:linear,0.2,gbtree,rmse,0.2,2,35,0.8,0.8,hist,22,5.536278,5.26239705644317,5.6382036
+reg:linear,0.2,gbtree,rmse,0.2,2,40,0.8,0.8,hist,16,5.566655,5.21770109001601,5.645009

@@ -56,7 +56,7 @@ checkforstats<- function() {
 checkformasterfile <- function() {
   
   #remove file if it already exists
-  if (file.exists("./project/volume/data/processed/StatsandBoxscores.csv")) {
+  if (file.exists("./project/volume/data/interim/StatsandBoxscores.csv")) {
     print("The file already exists")}
   else {
     source("./project/src/features/createmasterfile.R")
@@ -71,11 +71,11 @@ createteamstatsallowed<- function(rolltime,numweeks) {
   
   print("Running Function 4")
   
-  statsandscores<-fread("./project/volume/data/processed/StatsandBoxscores.csv")
+  statsandscores<-fread("./project/volume/data/interim/StatsandBoxscores.csv")
   
   
   #remove file if it already exists to not overwrite the data
-  path1<-"./project/volume/data/processed/teamstats"
+  path1<-"./project/volume/data/interim/teamstats"
   path2<-paste0(path1,rolltime,".csv")
   if (file.exists(path2)) {
     file.remove(path2)}
@@ -107,11 +107,11 @@ createplayerstats<- function(rolltime, numweeks) {
   
   print("Running Function 5")
   
-  statsandscores<-fread("./project/volume/data/processed/StatsandBoxscores.csv")
+  statsandscores<-fread("./project/volume/data/interim/StatsandBoxscores.csv")
   player_achieved<-statsandscores
   
   #remove file if it already exists to not override the data
-  path1<-"./project/volume/data/processed/playerstats"
+  path1<-"./project/volume/data/interim/playerstats"
   path2<-paste0(path1,rolltime,".csv")
   if (file.exists(path2)) {
     file.remove(path2)}
@@ -161,8 +161,8 @@ createtrainset <- function(rolltime, numweeks) {
   if (file.exists(path2)) {
     file.remove(path2)}
   
-  path3 <- "./project/volume/data/processed/playerstats"
-  path4 <- "./project/volume/data/processed/teamstats"
+  path3 <- "./project/volume/data/interim/playerstats"
+  path4 <- "./project/volume/data/interim/teamstats"
   path5 <- paste0(path3,rolltime,".csv")
   path6 <- paste0(path4,rolltime,".csv")
   
