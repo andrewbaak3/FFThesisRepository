@@ -33,19 +33,22 @@ runModel<- function(rolltime,pos) {
   param_table<-fread("./project/src/models/HyperParams/hyperparametertuning.csv")
   
   train[train$Pos=="HB"]$Pos<-"RB"
+  train<-train[order(season,week)]
   
   sample_pos<-pos
   train<-train[Pos==sample_pos]
   
-  train1<-train[season<2017]
+  train1<-train[season==2016]
   test1<-train[season==2017]
   
+  #Create output data table which is a subset of the columns of test1
+  output<-test1[,.(season,week,cumulativeweek,Tm,game_id,Opponent,Player,Pos,PPRFantasyPoints)]
+  output<-output[order(season,week)]
 
   #Prep Data for Modeling
   train1_y<-train1$PPRFantasyPoints
   test_y<-test1$PPRFantasyPoints
   test1$PPRFantasyPoints<-0
-  
   
   #Get rid of columns not needed for modeling
   drops<-c("season","Tm","game_id","Opponent","Player","Pos","cumulativeweek")
@@ -151,25 +154,35 @@ runModel<- function(rolltime,pos) {
     
     path3<-"./project/src/models/HyperParams/Hyperparams"
     path4<-paste0(path3,pos)
-    path5<-paste0(path4,rolltime,".csv")
+    path5<-paste0(path4,rolltime,"_2016train",".csv")
     fwrite(train_param,path5, append = T)
     
-    modelpath<-paste0('./project/volume/models/',rolltime,'_',pos,"_hyperparam_",i,".model")
+    modelpath<-paste0('./project/volume/models/',rolltime,'_',pos,"_hyperparam_2016_",i,".model")
     saveRDS(XGB_model, modelpath)
     
   }
   
   best_hyper_index<-which(train_param$cv_error==min(train_param$cv_error))
-  modelpath<-paste0('./project/volume/models/',rolltime,'_',pos,"_hyperparam_",best_hyper_index,".model")
+  modelpath<-paste0('./project/volume/models/',rolltime,'_',pos,"_hyperparam_2016_",best_hyper_index,".model")
   XGB_model<-readRDS(modelpath)
   
-  plotfile<-paste0("./project/volume/data/importanceplots/",rolltime,'_',pos,".pdf")
+  plotfile<-paste0("./project/volume/data/importanceplots/",rolltime,'_2016_',pos,".pdf")
   pdf(plotfile)
   
   cols<-XGB_model[["feature_names"]]
   importance <- xgb.importance(feature_names = cols, model = XGB_model)
   xgb.plot.importance(importance_matrix = importance, top_n = 50)
   dev.off()
+  
+  #Create Predictions
+  pred<-predict(XGB_model, newdata=dtest)
+  
+  #Add predictions to output data table as new column, PredPoints
+  output$PredPoints<-pred
+  
+  #Write out output table to teamconstruction folder, where it can be used to aid in team construction
+  teampath<-paste0("./project/volume/data/teamconstruction/",rolltime,"_",pos,".csv")
+  fwrite(output,teampath)
   
 }
   
