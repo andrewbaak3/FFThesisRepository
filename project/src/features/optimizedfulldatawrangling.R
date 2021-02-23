@@ -254,6 +254,19 @@ createtrainset <- function(rolltime, numweeks) {
   
 }
 
+##############
+#Function 8
+##############
+#Function to scrape DK data
+checkforDKfile <- function() {
+  
+  if (file.exists("./project/volume/data/interim/DKsalaries.csv")) {
+    print("The file already exists")}
+  else {
+    source("./project/src/features/DKsalaryscraping.R")
+  }
+}
+
 ###############
 #Main Function
 ###############
@@ -265,6 +278,7 @@ datawrangle<-function(rolltime, numweeks){
   createplayerstats(rolltime,numweeks)
   checkforinjuryfile()
   createtrainset(rolltime,numweeks)
+  checkforDKfile()
 }
 
 datawrangle(rolltime,numweeks)
