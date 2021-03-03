@@ -122,7 +122,6 @@ scrapeDK<- function() {
   #Add new column with points per dollar of salary (multiplying by 1000 to make the number easier to work with)
   final$PPD<-(final$`DK points`/final$`DK salary`)*1000
   
-  
   #FINISHED
   
   #write out final as a csv to interim data folder 

@@ -102,6 +102,33 @@ scrapeinjury <- function() {
   drops<-c("id","Injury")
   InjuryTable<-InjuryTable[, !drops, with = FALSE]
   
+  #Create list of columns from injury table to be kept 
+  keeps<-c("season","week","Player","Wed","Thu","Fri","GameStatus","ankle", "concussion","toe",
+                 "left_shoulder","knee")
+  
+  
+  
+  #Create consolidate data table, to rowsum all injury columns not wanted in the final model
+  consolidate<-InjuryTable[,.(abdomen,achilles,back,bicep,biceps,calf,calves,chest,clavicle,collarbone,
+                              concussion_neck,core,core_muscle,core_muscle_injury,cramps,ear,elbow,
+                              elbow_and_knee,eye,fibula,finger,finger_left_hand,
+                              finger_right_hand,foot,forearm,forehead,glute,groin,hamstring,hamstrings,
+                              hand,head,heat_cramps,heat_exhaustion,heel,hip,hips,illness,jaw,knees,
+                              left_ankle,left_calf,left_foot,left_groin,left_hip,left_knee,left_thumb,left_wrist,
+                              liver,load_management,low_back,lower_leg,lumbar,lung,mouth,neck,non_football_injury,
+                              nonfootball_illness,nonfootball_injury,nose,not_injury_related,
+                              not_injury_related__illness,oblique,other,pectoral,pelvis,quadricep,rest,
+                              resting_vet,resting_veteran,rib,rib_cage,ribs,right_calf,right_collarbone,
+                              right_elbow,right_finger,right_foot,right_groin,right_hamstring,right_hand,
+                              right_hip,right_knee,right_quadricep,right_shoulder,right_thumb,right_wrist)]
+  
+  #rowSum all columns from consolidate into other
+  other<-rowSums(consolidate)
+  
+  #Get rid of all columns but keeps in injury column, add Other 
+  InjuryTable <- InjuryTable[, keeps, with = FALSE]
+  InjuryTable$Other<-other
+  
   
   #Write out injury data table
   fwrite(InjuryTable,"./project/volume/data/interim/injuryreports.csv")
