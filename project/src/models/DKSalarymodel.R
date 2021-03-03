@@ -3,41 +3,26 @@ library(caret)
 library(data.table)
 library(glmnet)
 
-#Read in player data 
-qb<-fread("./project/volume/data/teamconstruction/")
-te<-fread("./project/volume/data/teamconstruction/")
-wr<-fread("./project/volume/data/teamconstruction/")
-rb<-fread("./project/volume/data/teamconstruction/")
-
-pos<-list(qb,te,wr,rb)
-
-final<-data.table()
-
-#Merge all player data into one final dataframe
-final<-rbind(final,list)
-
-#Read in draftkings data
-DKdata<-fread("./project/volume/data/interim/DKsalaries.csv")
-
-#Drop unimportant columns
-DKdrops<-c("GID","Team","h/a","Oppt")
-DKdata<-DKdata[, !DKdrops, with = FALSE]
+#Read in  data 
+data<-fread("./project/volume/data/teamconstruction/packingdata.csv")
 
 
-#Rename columns in draftkings data to ease merging process
-setnames(DKdata, c("Week","Year","Name"), c("week","season","Player"))
+modeldata<-data[,.(PredPoints,`DK salary`,`DK points`)]
 
-#Set keys, merge the two datasets together
-setkey(final,season,week,Player,Pos)
-setkey(DKdata,season,week,Player,Pos)
+setnames(modeldata, c("DK points","DK salary"), c("DKpoints","DKsalary"))
 
-modelready<-merge(final,DKdata, all.x = TRUE)
+#Set seed for randomization
+set.seed(123) 
 
+#creating index so data can be split into train and test
+trainIndex <- createDataPartition(modeldata$DKpoints,p=0.75,list=FALSE, na.rm = T)
 
-modeldata<-modelready[,.]
+#splitting data into training/testing data using the trainIndex object
+train <- data[trainIndex,] #training data (75% of data)
+test <- data[-trainIndex,] #testing data (25% of data)
 
-x<-modeldata[,.]
-y_train<-modeldata$DKSalary
+x<-modeldata[,.(DKpoints,PredPoints)]
+y_train<-modeldata$DKsalary
 
 x = as.matrix(x)
 
@@ -45,7 +30,7 @@ x = as.matrix(x)
 
 #Cross validation
 lambdas <- 10^seq(2, -3, by = -.1)
-cv_ridge <- cv.glmnet(x, y_train, alpha = 0, lambda = lambdas)
+cv_ridge <- cv.glmnet(x, y_train, alpha = 0, lambda = lambdas, na.action = na.omit)
 optimal_lambda <- cv_ridge$lambda.min
 optimal_lambda
 
