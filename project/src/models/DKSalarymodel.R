@@ -27,11 +27,16 @@ train <- modeldata[trainIndex,] #training data (75% of data)
 test <- modeldata[-trainIndex,] #testing data (25% of data)
 
 
+
+#Preprocess numeric columns
+pre_proc_val <- preProcess(train, method = c("center", "scale"))
+train = predict(pre_proc_val, train)
+test = predict(pre_proc_val, test)
+
 #Make dummy variables
 dummies <- dummyVars(DKpoints ~ ., data = modeldata[,.(PredPoints,DKsalary,DKpoints)])
 train_dummies = predict(dummies, newdata = train[,.(PredPoints,DKsalary,DKpoints)])
 test_dummies = predict(dummies, newdata = test[,.(PredPoints,DKsalary,DKpoints)])
-
 
 x = as.matrix(train_dummies)
 y_train = train$DKpoints
