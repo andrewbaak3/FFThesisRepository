@@ -49,12 +49,12 @@ y_test = test$DKpoints
 
 #Cross validation
 lambdas <- 10^seq(2, -3, by = -.1)
-cv_ridge <- cv.glmnet(x, y_train, alpha = 0, lambda = lambdas, na.action = na.omit)
+cv_ridge <- cv.glmnet(x, y_train, alpha = 1, lambda = lambdas, na.action = na.omit)
 optimal_lambda <- cv_ridge$lambda.min
 optimal_lambda
 
 #Training
-ridge_reg = glmnet(x, y_train, nlambda = 25, alpha = 0, family = 'gaussian', lambda = optimal_lambda)
+ridge_reg = glmnet(x, y_train, nlambda = 25, alpha = 1, family = 'gaussian', lambda = optimal_lambda)
 
 summary(ridge_reg)
 
@@ -77,4 +77,6 @@ eval_results <- function(true, predicted, df) {
 }
 # Prediction and evaluation on test data
 eval_results(y_test, predictions, test)
+
+plot(ridge_reg)
 

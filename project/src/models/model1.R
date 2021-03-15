@@ -166,7 +166,7 @@ runModel<- function(rolltime,pos) {
   
   #best_hyper_index<-which(train_param$cv_error==min(train_param$cv_error))
   #modelpath<-paste0('./project/volume/models/',rolltime,'_',pos,"final",best_hyper_index,".model")
-  #XGB_model<-readRDS(modelpath)
+  #mXGB_model<-readRDS(modelpath)
   
   plotfile<-paste0("./project/volume/data/importanceplots/",rolltime,'final',pos,".pdf")
   pdf(plotfile)
@@ -181,7 +181,7 @@ runModel<- function(rolltime,pos) {
   
   #Add predictions to output data table as new column, PredPoints
   output$PredPoints<-pred
-  
+
   #Write out output table to teamconstruction folder, where it can be used to aid in team construction
   teampath<-paste0("./project/volume/data/teamconstruction/",rolltime,"_final_",pos,".csv")
   fwrite(output,teampath)

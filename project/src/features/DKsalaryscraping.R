@@ -117,10 +117,7 @@ scrapeDK<- function() {
   final[final$Oppt == "lar"]$Oppt<-"LA"
   final[final$Oppt == "lac"]$Oppt<-"LAC"
   final[final$Oppt == "lvr"]$Oppt<-"OAK"
-  
-  
-  #Add new column with points per dollar of salary (multiplying by 1000 to make the number easier to work with)
-  final$PPD<-(final$`DK points`/final$`DK salary`)*1000
+
   
   #FINISHED
   

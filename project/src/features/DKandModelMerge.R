@@ -1,14 +1,11 @@
-library(Metrics)
-library(caret)
+
 library(data.table)
-library(glmnet)
 
 #Read in player data 
 qb<-fread("./project/volume/data/teamconstruction/roll5_final_QB.csv")
 te<-fread("./project/volume/data/teamconstruction/roll5_final_TE.csv")
 wr<-fread("./project/volume/data/teamconstruction/roll5_final_WR.csv")
 rb<-fread("./project/volume/data/teamconstruction/roll5_final_RB.csv")
-
 
 final<-data.table()
 
@@ -32,5 +29,10 @@ setkey(DKdata,season,week,Player,Pos)
 
 modelready<-merge(final,DKdata, all.x = TRUE)
 
+#Compute points per dollar (PPD) using Predicted Points divided by Salary. Multiplying by 1000 to make it easier
+#to interpret 
+modelready$PPD<-(modelready$PredPoints/modelready$`DK salary`)*1000
 
+
+#Write out data
 fwrite(modelready, "./project/volume/data/teamconstruction/packingdata.csv")
