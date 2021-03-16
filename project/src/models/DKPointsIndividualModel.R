@@ -54,7 +54,7 @@ eval_results <- function(true, predicted, df) {
 
 linearmodel1<-lm(DKpoints~PredPoints, data = train)
 summary(linearmodel1)
-plot(linearmodel1)
+#plot(linearmodel1)
 
 predictions1<-predict(linearmodel1, test)
 
@@ -66,7 +66,7 @@ results1<-eval_results(y_test, predictions1, test)
 
 linearmodel2<-lm(DKpoints~DKsalary, data = train)
 summary(linearmodel2)
-plot(linearmodel2)
+#plot(linearmodel2)
 
 predictions2<-predict(linearmodel2, test)
 results2<-eval_results(y_test, predictions2, test)
