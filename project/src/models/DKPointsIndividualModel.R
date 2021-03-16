@@ -1,7 +1,7 @@
 library(Metrics)
 library(caret)
 library(data.table)
-library(glmnet)
+
 
 #Read in  data 
 data<-fread("./project/volume/data/teamconstruction/packingdata.csv")
@@ -15,7 +15,6 @@ modeldata[is.na(modeldata$PredPoints)]$PredPoints<-0
 modeldata[is.na(modeldata$DKsalary)]$DKsalary<-0
 modeldata[is.na(modeldata$DKpoints)]$DKpoints<-0
 
-
 #Set seed for randomization
 set.seed(123) 
 
@@ -26,41 +25,15 @@ trainIndex <- createDataPartition(modeldata$DKpoints,p=0.75,list=FALSE)
 train <- modeldata[trainIndex,] #training data (75% of data)
 test <- modeldata[-trainIndex,] #testing data (25% of data)
 
-
-
 #Preprocess numeric columns
 pre_proc_val <- preProcess(train, method = c("center", "scale"))
 train = predict(pre_proc_val, train)
 test = predict(pre_proc_val, test)
 
-#Make dummy variables
-dummies <- dummyVars(DKpoints ~ ., data = modeldata[,.(PredPoints,DKsalary,DKpoints)])
-train_dummies = predict(dummies, newdata = train[,.(PredPoints,DKsalary,DKpoints)])
-test_dummies = predict(dummies, newdata = test[,.(PredPoints,DKsalary,DKpoints)])
-
-x = as.matrix(train_dummies)
 y_train = train$DKpoints
-
-x_test = as.matrix(test_dummies)
 y_test = test$DKpoints
 
-
-#Model
-
-#Cross validation
-lambdas <- 10^seq(2, -3, by = -.1)
-cv_ridge <- cv.glmnet(x, y_train, alpha = 1, lambda = lambdas, na.action = na.omit)
-optimal_lambda <- cv_ridge$lambda.min
-optimal_lambda
-
-#Training
-ridge_reg = glmnet(x, y_train, nlambda = 25, alpha = 1, family = 'gaussian', lambda = optimal_lambda)
-
-summary(ridge_reg)
-
-
-predictions = predict(ridge_reg, s = optimal_lambda, newx = x_test, type = "coefficient")
-
+#Function to calculate rmse and Rsquared
 # Compute R^2 from true and predicted values
 eval_results <- function(true, predicted, df) {
   SSE <- sum((predicted - true)^2)
@@ -68,15 +41,33 @@ eval_results <- function(true, predicted, df) {
   R_square <- 1 - SSE / SST
   RMSE = sqrt(SSE/nrow(df))
   
-  
   # Model performance metrics
   data.frame(
     RMSE = RMSE,
     Rsquare = R_square
   )
 }
-# Prediction and evaluation on test data
-eval_results(y_test, predictions, test)
 
-plot(ridge_reg, xvar = "lambda")
+##########################################
+#Model to examine PredPoints and DKPoints
+##########################################
+
+linearmodel1<-lm(DKpoints~PredPoints, data = train)
+summary(linearmodel1)
+plot(linearmodel1)
+
+predictions1<-predict(linearmodel1, test)
+
+results1<-eval_results(y_test, predictions1, test)
+
+##########################################
+#Model to examine Dksalary and DKPoints
+##########################################
+
+linearmodel2<-lm(DKpoints~DKsalary, data = train)
+summary(linearmodel2)
+plot(linearmodel2)
+
+predictions2<-predict(linearmodel2, test)
+results2<-eval_results(y_test, predictions2, test)
 
