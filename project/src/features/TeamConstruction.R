@@ -80,22 +80,38 @@ teamConstruct<-function(week_DT,C){
   return(team)
 }
 
+#Create teams for every week of the season
 weeks<-1:17
 results<-data.table()
 for (i in 1:length(weeks)) {
-  
   week_dt<-DT[week==i]
   temp<-teamConstruct(week_dt, 1.2)
-  temp<-as.data.table(temp)
-  results<-rbind(results,temp)
-}
-
-output<-list()
-for (i in 1:length(weeks)) {
-  
-  week_dt<-DT[week==i]
-  temp<-teamConstruct(week_dt, 1.2)
-  output<-append(output, temp)
+  new_row<-data.table(week=i,predpoints=temp$predPoints,salary = temp$salary_tot, points=temp$points)
+  results<-rbind(results,new_row)
 }
 
 
+
+results$points<-results$points+6.26875
+#Read in historical contest data 
+historicalDK<-fread("./project/volume/data/teamconstruction/resultsdb.csv")
+historicalDK<-historicalDK[1:624, ]
+
+#Change name to make merging easier
+setnames(historicalDK, "Week", "week")
+
+#Set keys and merge the two datasets
+setkey(results,week)
+setkey(historicalDK,week)
+analysis_table<-merge(historicalDK,results)
+
+setnames(analysis_table, c("Cash Line","Top Prize","Buy In","Max Entries","Prize Pool"), 
+         c("CashLine","TopPrize","BuyIn","MaxEntries","PrizePool"))
+
+
+#Compute profits 
+analysis_table$Profit<-((analysis_table$points>analysis_table$CashLine)*analysis_table$TopPrize)-analysis_table$BuyIn
+
+profits<-sum(analysis_table$Profit, na.rm = T)
+
+cost<-sum(analysis_table$BuyIn, na.rm =T)

@@ -1,4 +1,3 @@
-
 library(data.table)
 
 #Read in player data 
@@ -28,6 +27,18 @@ setkey(final,season,week,Player,Pos)
 setkey(DKdata,season,week,Player,Pos)
 
 modelready<-merge(final,DKdata, all.x = TRUE)
+
+#Add in defensive stats
+def<-fread("./project/volume/data/interim/DKsalaries.csv") 
+def<-def[Year==2017]
+def<-def[Pos == "Def"]
+setnames(def, c("Week","Year","Name"), c("week","season","Player"))
+
+
+Defdrops<-c("GID","Team","h/a","Oppt")
+def<-def[, !Defdrops, with = FALSE]
+
+modelready<-rbind(modelready, def, fill = T)
 
 #Compute points per dollar (PPD) using Predicted Points divided by Salary. Multiplying by 1000 to make it easier
 #to interpret 
